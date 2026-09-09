@@ -12,6 +12,7 @@ and tech decisions so they don't get lost as the app grows.
 - localStorage only: add and delete your own phrases/words (basic to-do-app style CRUD).
 - Simple list/detail UI, no search yet.
 - Testing: unit tests for CRUD logic/utils, basic CI setup (lint + test + build on push).
+- Accessibility: semantic HTML, labeled form inputs/buttons, min touch target sizes.
 
 ### v2 — Search + quizzes (still local-only)
 
@@ -19,6 +20,7 @@ and tech decisions so they don't get lost as the app grows.
 - Quizzes generated from your existing local words/phrases.
 - Basic progress/results tracking, still in localStorage.
 - Testing: integration tests for search/filter and quiz flows.
+- Accessibility: ARIA labels for search/filter controls, focus states, keyboard nav for quizzes.
 
 ### v3 — Accounts + AI
 
@@ -27,6 +29,7 @@ and tech decisions so they don't get lost as the app grows.
   phrases or short stories using it.
 - Migrate local data to the backend on login (with local fallback if offline).
 - Testing: integration tests for auth flows and backend sync, mock AI API in tests.
+- Accessibility: accessible auth forms (labels/errors announced), color contrast check.
 
 ### v4 — PWA: notifications + offline + polish
 
@@ -38,11 +41,24 @@ and tech decisions so they don't get lost as the app grows.
 - Offline support via service worker caching (pairs naturally with the PWA work above).
 - Analytics, localization, pagination/caching, general polish.
 - Testing: offline/service-worker test scenarios, end-to-end smoke tests.
+- Accessibility: manifest name/icons meaningful for screen readers, full a11y audit pass.
 
 ## Engineering practices
 
 - Testing: Vitest + React Testing Library (unit + integration), expanded each version.
 - CI: GitHub Actions running lint → test → build on every push/PR.
+
+## Accessibility
+
+Still needed even as a mobile PWA — arguably more so, since it's a web app relying on
+VoiceOver (iOS) / TalkBack (Android), not native platform accessibility.
+
+- Semantic HTML + ARIA labels for interactive elements (lists, buttons, forms).
+- Minimum touch target sizes (~44×44pt) and no hover-only interactions.
+- Sufficient color contrast (important for outdoor/mobile viewing).
+- Visible focus states and logical tab order (for keyboard/switch device users too).
+- Manifest `name`/`short_name`/icons should be meaningful for home screen + app switcher.
+- Bake this in per version rather than bolting it on later — much harder to retrofit.
 
 ## Recommended project layout (feature-first, but pragmatic)
 
