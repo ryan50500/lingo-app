@@ -12,6 +12,8 @@ and tech decisions so they don't get lost as the app grows.
 - localStorage only: add and delete your own phrases/words (basic to-do-app style CRUD).
 - Simple list/detail UI, no search yet.
 - Testing: unit tests for CRUD logic/utils, basic CI setup (lint + test + build on push).
+- CI: GitHub Actions workflow (`.github/workflows/ci.yml`) running lint → test → build on
+  every push/PR, set up as soon as the repo is pushed to GitHub.
 - Accessibility: semantic HTML, labeled form inputs/buttons, min touch target sizes.
 
 ### v2 — Search + quizzes (still local-only)
@@ -21,12 +23,19 @@ and tech decisions so they don't get lost as the app grows.
 - Basic progress/results tracking, still in localStorage.
 - Testing: integration tests for search/filter and quiz flows.
 - Accessibility: ARIA labels for search/filter controls, focus states, keyboard nav for quizzes.
+- Quiz interaction: drag-and-drop "drag the correct answer into the sentence blank" question
+  type, using `@dnd-kit/core` (touch/pointer-event based — native HTML5 DnD doesn't work on
+  mobile). Correct/incorrect shown via green check / red X after drop.
 
 ### v3 — Accounts + AI
 
 - Authentication and login, with sync to a backend (needed before AI, to gate usage per-user).
 - AI generator: give it a word/phrase in the language you're learning, it generates random
   phrases or short stories using it.
+- AI-generated fill-in-the-blank quizzes: AI produces sentences with one word replaced by
+  `____`, plus the correct word + plausible wrong-answer distractors (structured JSON
+  response), reusing the v2 drag-and-drop mechanic. Validate/shuffle client-side; prompt
+  should emphasize grammatically plausible distractors so the quiz isn't trivial.
 - Migrate local data to the backend on login (with local fallback if offline).
 - Testing: integration tests for auth flows and backend sync, mock AI API in tests.
 - Accessibility: accessible auth forms (labels/errors announced), color contrast check.
