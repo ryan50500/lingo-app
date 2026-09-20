@@ -1,54 +1,59 @@
 # Lingo App — Roadmap
 
-A hybrid of Context Reverso-style phrase search, Duolingo-style learning features,
-and an AI phrase generator. This doc tracks the planned versions, architecture,
-and tech decisions so they don't get lost as the app grows.
+A focused language-learning quiz app. Users drag the correct word into a blank in
+a sentence, receive immediate feedback, and build progress over time. This doc
+tracks the planned versions, architecture, and tech decisions as the app grows.
 
 ## Version roadmap (3–4 short milestones)
 
-### v1 — Minimal viable product
+### v1 — Quiz foundation
 
 - No login or auth yet.
-- localStorage only: add and delete your own phrases/words (basic to-do-app style CRUD).
-- Simple list/detail UI, no search yet.
-- Testing: unit tests for CRUD logic/utils, basic CI setup (lint + test + build on push).
+- A local quiz bank stored in localStorage: add, edit, and delete words and
+  sentence templates.
+- A quiz screen with one blank per sentence, draggable answer choices, and
+  correct/incorrect feedback.
+- A results screen showing score, completed questions, and missed answers.
+- Testing: unit tests for quiz validation, scoring, shuffle logic, and storage;
+  basic CI setup (lint + test + build on push).
 - CI: GitHub Actions workflow (`.github/workflows/ci.yml`) running lint → test → build on
   every push/PR, set up as soon as the repo is pushed to GitHub.
 - Accessibility: semantic HTML, labeled form inputs/buttons, min touch target sizes.
 
-### v2 — Search + quizzes (still local-only)
+### v2 — Quiz modes + progress (still local-only)
 
-- Search/filter your own words/phrases page (client-side, filters localStorage data).
-- Quizzes generated from your existing local words/phrases.
-- Basic progress/results tracking, still in localStorage.
-- Testing: integration tests for search/filter and quiz flows.
-- Accessibility: ARIA labels for search/filter controls, focus states, keyboard nav for quizzes.
+- Multiple quiz sessions: practice mode, timed mode, and review-missed-answers mode.
+- Progress history, streaks, accuracy by word, and a simple difficulty indicator,
+  still stored in localStorage.
+- A quiz-bank management view with client-side search/filter for words and sentences.
+- Testing: integration tests for quiz setup, drag-and-drop flows, results, and progress.
+- Accessibility: ARIA labels for quiz controls, focus states, keyboard-accessible
+  answer selection, and clear announcements for correct/incorrect feedback.
 - Quiz interaction: drag-and-drop "drag the correct answer into the sentence blank" question
   type, using `@dnd-kit/core` (touch/pointer-event based — native HTML5 DnD doesn't work on
   mobile). Correct/incorrect shown via green check / red X after drop.
 
-### v3 — Accounts + AI
+### v3 — Accounts + generated quizzes
 
-- Authentication and login, with sync to a backend (needed before AI, to gate usage per-user).
-- AI generator: give it a word/phrase in the language you're learning, it generates random
-  phrases or short stories using it.
-- AI-generated fill-in-the-blank quizzes: AI produces sentences with one word replaced by
-  `____`, plus the correct word + plausible wrong-answer distractors (structured JSON
-  response), reusing the v2 drag-and-drop mechanic. Validate/shuffle client-side; prompt
-  should emphasize grammatically plausible distractors so the quiz isn't trivial.
-- Migrate local data to the backend on login (with local fallback if offline).
-- Testing: integration tests for auth flows and backend sync, mock AI API in tests.
+- Authentication and login, with backend sync for quiz banks, attempts, and progress.
+- Generated quiz questions: a user supplies a target word, and the server returns a
+  sentence with one blank, the correct word, and plausible distractors as structured JSON.
+- Validate question shape, answer counts, language, and blank placement before showing
+  generated questions. Treat generated text as untrusted plain text when rendering it.
+- Migrate local quiz data to the backend on login, with a local fallback if offline.
+- Testing: integration tests for auth, sync conflicts, generated-question validation,
+  and mocked generation responses.
 - Accessibility: accessible auth forms (labels/errors announced), color contrast check.
 
-### v4 — PWA: notifications + offline + polish
+### v4 — PWA: offline quizzes + polish
 
 - Turn the app into a proper PWA (manifest + service worker) so it can be added to the
   iOS/Android home screen.
-- Push notifications (e.g. "do your quiz" reminders) — note: on iOS this only works once the
-  app is installed to the home screen (iOS 16.4+), and needs a push server (e.g. web-push or
-  a service like OneSignal).
-- Offline support via service worker caching (pairs naturally with the PWA work above).
-- Analytics, localization, pagination/caching, general polish.
+- Offline quiz sessions and queued progress synchronization via service worker caching.
+- Push notifications for review reminders — on iOS this requires the app to be installed
+  to the home screen (iOS 16.4+) and needs a push server or notification service.
+- Analytics for quiz completion, accuracy, and retention; localization; caching; and
+  general polish.
 - Testing: offline/service-worker test scenarios, end-to-end smoke tests.
 - Accessibility: manifest name/icons meaningful for screen readers, full a11y audit pass.
 
@@ -75,10 +80,10 @@ VoiceOver (iOS) / TalkBack (Android), not native platform accessibility.
 
 ## Tech suggestions
 
-- Routing: React Router
+- Routing: React Router for quiz, quiz-bank, results, progress, and settings views
 - State: start with React Context or Zustand; move to Redux Toolkit if complexity grows
-- Data fetching/caching: React Query or SWR for remote calls
-- AI calls: proxy server (avoid exposing keys); small serverless endpoint
+- Data fetching/caching: React Query or SWR for remote quiz and progress data
+- Question generation: proxy server (avoid exposing keys); small serverless endpoint
 - Testing: Vitest + React Testing Library
 - Linting/format: ESLint + Prettier (already present)
 - Types: strict TypeScript (keep types in feature or shared `types/`)
