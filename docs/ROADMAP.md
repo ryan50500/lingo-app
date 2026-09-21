@@ -1,89 +1,92 @@
 # Lingo App — Roadmap
 
-A focused language-learning quiz app. Users drag the correct word into a blank in
-a sentence, receive immediate feedback, and build progress over time. This doc
-tracks the planned versions, architecture, and tech decisions as the app grows.
+A focused language-learning quiz app. Users drag the correct word into a blank
+in a sentence, receive immediate feedback, and improve through questions that
+adapt to their weaknesses.
 
-## Version roadmap (3–4 short milestones)
+## Phase 1 — Basic app
 
-### v1 — Quiz foundation
+- Build the client with React and strict TypeScript.
+- Generate quiz questions with an AI service.
+- Support difficulty levels from A1 through C1.
+- Let users drag an answer into a sentence blank using `@dnd-kit/core`.
+- Show basic scoring and a simple quiz result.
+- Render question text as plain text rather than executable HTML.
+- Add unit and integration tests for question data, scoring, and the quiz flow.
 
-- No login or auth yet.
-- A local quiz bank stored in localStorage: add, edit, and delete words and
-  sentence templates.
-- A quiz screen with one blank per sentence, draggable answer choices, and
-  correct/incorrect feedback.
-- A results screen showing score, completed questions, and missed answers.
-- Testing: unit tests for quiz validation, scoring, shuffle logic, and storage;
-  basic CI setup (lint + test + build on push).
-- CI: GitHub Actions workflow (`.github/workflows/ci.yml`) running lint → test → build on
-  every push/PR, set up as soon as the repo is pushed to GitHub.
-- Accessibility: semantic HTML, labeled form inputs/buttons, min touch target sizes.
+## Phase 2 — Validation of questions
 
-### v2 — Quiz modes + progress (still local-only)
+- Prefetch the next question while the current question is being answered.
+- Add loading, empty, error, retry, and refetch states.
+- Validate AI responses with Zod before displaying or storing them.
+- Reject bad questions, including malformed data, missing answers, invalid blanks,
+  duplicate answers, and duplicate questions within a quiz session.
+- Retry or refetch a question when the AI returns unusable content.
+- Add unit and integration tests for validation, duplicate detection, retries,
+  prefetching, and failure states.
 
-- Multiple quiz sessions: practice mode, timed mode, and review-missed-answers mode.
-- Progress history, streaks, accuracy by word, and a simple difficulty indicator,
-  still stored in localStorage.
-- A quiz-bank management view with client-side search/filter for words and sentences.
-- Testing: integration tests for quiz setup, drag-and-drop flows, results, and progress.
-- Accessibility: ARIA labels for quiz controls, focus states, keyboard-accessible
-  answer selection, and clear announcements for correct/incorrect feedback.
-- Quiz interaction: drag-and-drop "drag the correct answer into the sentence blank" question
-  type, using `@dnd-kit/core` (touch/pointer-event based — native HTML5 DnD doesn't work on
-  mobile). Correct/incorrect shown via green check / red X after drop.
+## Phase 3 — Track areas of weakness
 
-### v3 — Accounts + generated quizzes
+- Store quiz attempts, selected answers, scores, timestamps, and response times.
+- Track grammar topics associated with each question.
+- Track recurring mistakes by word, grammar topic, and difficulty level.
+- Generate adaptive questions based on the user's weak areas.
+- Add a "Your weak areas" screen with useful grammar feedback.
+- Introduce a backend database when cross-session persistence and user accounts
+  are needed. A possible first choice is PostgreSQL with a small API layer.
+- Define data ownership, migrations, validation, and privacy rules before storing
+  user learning history remotely.
+- Add unit and integration tests for attempt storage, analytics, adaptive question
+  selection, database access, and the weak-areas screen.
 
-- Authentication and login, with backend sync for quiz banks, attempts, and progress.
-- Generated quiz questions: a user supplies a target word, and the server returns a
-  sentence with one blank, the correct word, and plausible distractors as structured JSON.
-- Validate question shape, answer counts, language, and blank placement before showing
-  generated questions. Treat generated text as untrusted plain text when rendering it.
-- Migrate local quiz data to the backend on login, with a local fallback if offline.
-- Testing: integration tests for auth, sync conflicts, generated-question validation,
-  and mocked generation responses.
-- Accessibility: accessible auth forms (labels/errors announced), color contrast check.
+## Phase 4 — Production engineering
 
-### v4 — PWA: offline quizzes + polish
-
-- Turn the app into a proper PWA (manifest + service worker) so it can be added to the
-  iOS/Android home screen.
-- Offline quiz sessions and queued progress synchronization via service worker caching.
-- Push notifications for review reminders — on iOS this requires the app to be installed
-  to the home screen (iOS 16.4+) and needs a push server or notification service.
-- Analytics for quiz completion, accuracy, and retention; localization; caching; and
-  general polish.
-- Testing: offline/service-worker test scenarios, end-to-end smoke tests.
-- Accessibility: manifest name/icons meaningful for screen readers, full a11y audit pass.
+- Add rate limiting around AI requests and other expensive endpoints.
+- Add notifications and review reminders.
+- Make the app installable as a PWA with a manifest and service worker.
+- Add observability and structured logging for request failures, latency, rejected
+  questions, and quiz completion without logging sensitive user data.
+- Measure and improve performance: bundle size, render work during dragging,
+  question latency, caching, and perceived loading time.
+- Refactor as the codebase grows: extract stable domain logic, simplify state
+  boundaries, remove duplication, and document important architectural decisions.
+- Add end-to-end tests, production error monitoring, and deployment checks.
 
 ## Engineering practices
 
-- Testing: Vitest + React Testing Library (unit + integration), expanded each version.
-- CI: GitHub Actions running lint → test → build on every push/PR.
+- Testing: Vitest and React Testing Library for unit and integration tests;
+  add end-to-end coverage as production workflows appear.
+- CI: GitHub Actions running lint, tests, and build checks on every push and pull request.
+- Types: strict TypeScript, with shared types for questions, attempts, answers,
+  grammar topics, and API responses.
+- Dependencies: review package size, maintenance status, security advisories,
+  and upgrade impact before adding or updating libraries.
 
 ## Accessibility
 
-Still needed even as a mobile PWA — arguably more so, since it's a web app relying on
-VoiceOver (iOS) / TalkBack (Android), not native platform accessibility.
+- Use semantic HTML and labeled controls for all quiz interactions.
+- Support keyboard and touch alternatives to dragging.
+- Announce loading, errors, and correct/incorrect feedback to assistive technology.
+- Maintain visible focus states, logical tab order, sufficient color contrast, and
+  minimum touch targets of approximately 44 by 44 points.
+- Test the quiz with keyboard navigation and VoiceOver or TalkBack before release.
 
-- Semantic HTML + ARIA labels for interactive elements (lists, buttons, forms).
-- Minimum touch target sizes (~44×44pt) and no hover-only interactions.
-- Sufficient color contrast (important for outdoor/mobile viewing).
-- Visible focus states and logical tab order (for keyboard/switch device users too).
-- Manifest `name`/`short_name`/icons should be meaningful for home screen + app switcher.
-- Bake this in per version rather than bolting it on later — much harder to retrofit.
+## Recommended project layout
 
-## Recommended project layout (feature-first, but pragmatic)
+Use a feature-first structure as the application grows:
 
-> Undecided — folder structure for features is still to be finalized.
+- `features/quiz` — question display, drag-and-drop answers, scoring, and quiz state.
+- `features/questions` — AI client, Zod schemas, validation, retries, and prefetching.
+- `features/progress` — attempts, weakness analysis, adaptive selection, and charts.
+- `shared` — API clients, storage, types, accessibility helpers, and test utilities.
 
 ## Tech suggestions
 
-- Routing: React Router for quiz, quiz-bank, results, progress, and settings views
-- State: start with React Context or Zustand; move to Redux Toolkit if complexity grows
-- Data fetching/caching: React Query or SWR for remote quiz and progress data
-- Question generation: proxy server (avoid exposing keys); small serverless endpoint
-- Testing: Vitest + React Testing Library
-- Linting/format: ESLint + Prettier (already present)
-- Types: strict TypeScript (keep types in feature or shared `types/`)
+- Routing: React Router for quiz, results, weak areas, and settings views.
+- Drag and drop: `@dnd-kit/core` for pointer and touch support.
+- Validation: Zod for AI responses and API boundaries.
+- Server state: React Query or SWR for question generation, prefetching, and caching.
+- Backend: a small API with PostgreSQL when Phase 3 persistence is required.
+- AI calls: proxy through the backend so API keys stay server-side.
+- Testing: Vitest, React Testing Library, and an end-to-end browser test tool.
+- Linting and formatting: ESLint and Prettier.
