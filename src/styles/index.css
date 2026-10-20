@@ -1,0 +1,84 @@
+
+/* ========================================
+   1. Design tokens
+   ======================================== */
+
+:root {
+  /* Colours */
+  --color-primary: #5b5bd6;
+  --color-primary-hover: #4848b8;
+
+  --color-text: #202533;
+  --color-text-muted: #687083;
+  --color-background: #f7f8fc;
+  --color-surface: #ffffff;
+  --color-border: #dfe3eb;
+
+  --color-success: #21845b;
+  --color-error: #c83f49;
+
+  /* Spacing */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Typography */
+  --font-family-base: system-ui, sans-serif;
+  --font-size-base: 1rem;
+
+  /* Borders */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+}
+
+/* ========================================
+   2. Minimal reset
+   ======================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* ========================================
+   3. Global styles
+   ======================================== */
+
+html {
+  font-family: var(--font-family-base);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
