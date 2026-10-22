@@ -5,111 +5,82 @@ in a sentence, receive immediate feedback, and improve through questions that
 adapt to their weaknesses.
 
 ## V1 — Basic playable app
-**Goal:** Get a complete end-to-end quiz working.
 
-- **React + TypeScript** — 🖥️ **Frontend concern:** Builds the quiz interface and gives you type safety.
-- **Vite** — 🖥️ **Frontend concern:** Handles development/build tooling for the React application.
-- **Node + Express** — ⚙️ **Backend concern:** Provides your server/API that the frontend communicates with.
-- **AI question generation** — ⚙️ **Backend concern:** The server calls the AI provider so your API key isn't exposed to the browser.
-- **A1–C1 difficulty selection** — 🖥️ **Frontend concern:** Lets the user choose their desired difficulty; the selection is then sent to the backend.
-- **Drag answer into blank** — 🖥️ **Frontend concern:** This is purely interactive quiz UI behaviour.
-- **Correct/incorrect feedback** — 🖥️ **Frontend + backend:** Backend determines the correct answer, while frontend displays the result.
-- **Basic scoring** — 🖥️ **Frontend concern initially:** The UI can calculate/display the score; later you can persist it through the backend.
-- **Basic loading/error states** — 🖥️ **Frontend concern:** Shows the user what is happening while API requests are running or failing.
-- **Basic unit/integration tests** — 🧪 **Both:** Frontend tests UI behaviour while backend tests server-side logic.
+**Goal:** Build a complete, playable end-to-end quiz.
+
+### Core application
+
+- **Frontend** — React, TypeScript and Vite; quiz setup, A1–C1 difficulty selection, drag-and-drop answers, feedback, scoring and loading/error states.
+- **Backend** — Node.js and Express API, including AI-powered question generation with API keys kept server-side.
+- **Testing** — Basic unit and integration tests covering key frontend behaviour and backend logic.
+
+### Engineering foundations
+
+- **Code formatting** — Prettier with shared configuration, a pinned development dependency and npm scripts.
+- **Continuous Integration (CI)** — GitHub Actions runs formatting checks, tests and production builds on pushes and pull requests.
+- **Pull request workflow** — Practise feature branches, code reviews and merging changes after required checks pass.
+- **Continuous Deployment (CD)** — Defer automated deployment until the application is ready for deployment in V4.
 
 ## V2 — Reliable AI-powered app
-**Goal:** Make AI-generated questions dependable rather than simply hoping the AI gives you good data.
 
-- **Zod validation** — ⚙️ **Backend concern:** Validates that AI responses actually match the structure your application expects.
-- **Validate grammar topic/difficulty/case** — ⚙️ **Backend concern:** The server should reject nonsensical or invalid question data before giving it to the frontend.
-- **Reject malformed questions** — ⚙️ **Backend concern:** Prevents bad AI output from entering your application.
-- **Duplicate-question detection** — ⚙️ **Backend concern:** The server/database can check whether you've already generated the same question.
-- **Retry failed AI generation** — ⚙️ **Backend concern:** Your server can automatically ask the AI again when generation fails.
-- **Prefetch next question** — 🖥️ **Frontend + backend:** Backend generates the question, while frontend requests it early so the next question is ready.
-- **Loading states** — 🖥️ **Frontend concern:** Tells the user that the next question is being generated.
-- **Error handling** — 🖥️ **Frontend + backend:** Backend handles technical failures; frontend turns them into useful messages/actions.
-- **Prevent double submissions** — 🖥️ **Frontend + backend:** Frontend can disable the button, while backend should still protect against duplicate requests.
-- **Better API error responses** — ⚙️ **Backend concern:** Gives the frontend predictable HTTP status codes and error information.
-- **More comprehensive tests** — 🧪 **Both:** You test AI/question-generation logic on the backend and the resulting user behaviour on the frontend.
+**Goal:** Ensure AI-generated questions are valid, reliable and handled gracefully when things go wrong.
 
-## V3 — Users + database + personalised learning
-**Goal:** Turn the quiz into a persistent, personalised application.
+### AI reliability
+
+- **Question validation** — Use Zod to validate question structure, grammar topic, difficulty and answer correctness; reject malformed or invalid questions.
+- **Duplicate detection** — Detect previously generated questions to reduce repetition.
+- **Retry handling** — Retry failed AI generation attempts and handle persistent failures safely.
+
+### User experience & API reliability
+
+- **Question prefetching** — Prepare the next question in advance to reduce waiting.
+- **Error handling & API responses** — Return consistent, predictable errors from the backend and display useful feedback in the frontend.
+- **Submission protection** — Prevent accidental double submissions on both frontend and backend.
+
+### Testing
+
+- **Expanded tests** — Cover AI response validation, generation failures, API behaviour and key frontend interactions.
+
+## V3 — Users, database & personalised learning
+
+**Goal:** Introduce user accounts, persist learning activity and adapt quizzes to each user's performance.
 
 ### Authentication & database
 
-- **PostgreSQL** — 🗄️ **Backend/database concern:** Stores users, questions, attempts, grammar topics and progress.
-- **Supabase-hosted PostgreSQL** — ☁️ **Infrastructure concern:** Supabase hosts/manages your PostgreSQL database so you don't have to run a database server yourself.
-- **User registration** — 🖥️ **Frontend + backend:** Frontend provides the registration form; backend/auth system creates and manages the account.
-- **User login** — 🖥️ **Frontend + backend:** Frontend collects credentials while the authentication system verifies the user.
-- **Authentication** — ⚙️ **Backend concern:** Establishes *who* the current user is when they make API requests.
-- **Authorisation** — ⚙️ **Backend concern:** Ensures User A cannot access User B's attempts or progress.
-- **Database migrations** — 🗄️ **Backend/database concern:** Gives you a controlled history of changes to your database structure.
-- **Users table** — 🗄️ **Database concern:** Stores persistent user/account information.
-- **Questions table** — 🗄️ **Database concern:** Stores generated questions and their metadata.
-- **Grammar topics** — 🗄️ **Database concern:** Allows questions and attempts to be associated with things like Genitive, Dative, etc.
-- **Attempts table** — 🗄️ **Database concern:** Records what the user answered and whether they were correct.
-- **Indexes** — 🗄️ **Database concern:** Makes frequently used queries faster as your data grows.
+- **Database** — Use Supabase-hosted PostgreSQL to store users, questions, grammar topics, attempts and learning progress.
+- **Authentication & authorisation** — Implement registration, login and secure access controls so users can only access their own data.
+- **Database schema & migrations** — Create the necessary tables, relationships and migrations; add indexes where they improve query performance.
 
 ### Personalised learning
 
-- **Track correct/incorrect answers** — ⚙️ **Backend + database:** Backend records the attempt and PostgreSQL persists it.
-- **Track mistakes** — ⚙️ **Backend + database:** Your application needs to associate mistakes with the user and relevant grammar topic.
-- **Calculate accuracy by grammar topic** — ⚙️ **Backend concern:** The server can aggregate historical attempts to calculate performance.
-- **Identify weak areas** — ⚙️ **Backend/domain logic:** This is application-specific learning logic rather than UI logic.
-- **Adaptive question selection** — ⚙️ **Backend/domain logic:** The server decides which grammar areas/questions should be prioritised.
-- **"Your weak areas" screen** — 🖥️ **Frontend concern:** Displays the personalised information returned by the API.
-- **Progress/history screen** — 🖥️ **Frontend concern:** Presents the user's historical performance visually.
-- **Difficulty adjustment** — ⚙️ **Backend/domain logic:** Your learning algorithm can decide whether the next questions should become easier or harder.
-- **Tests** — 🧪 **Both:** Backend tests the learning algorithms/API; frontend tests the progress and quiz interfaces.
+- **Learning history** — Record answers, correctness and mistakes against users and relevant grammar topics.
+- **Performance analysis** — Calculate accuracy, identify weak areas and track progress over time.
+- **Adaptive question selection** — Prioritise grammar topics and adjust difficulty based on the user's performance.
+- **Progress UI** — Add progress/history and "Your weak areas" screens.
+- **Testing** — Test authentication, data access permissions, learning logic, API behaviour and progress interfaces.
 
 ## V4 — Production & long-term maintenance
+
 **Goal:** Treat the application like something you're responsible for running and maintaining.
 
 ### Security & reliability
 
-- **Rate limiting** — ⚙️ **Backend concern:** Prevents someone from hammering your API and potentially generating huge numbers of AI requests.
-- **Input validation** — ⚙️ **Backend concern:** Never assume data coming from the browser is trustworthy.
-- **Secure API keys/environment variables** — ⚙️ **Backend/infrastructure concern:** Keeps secrets out of the frontend and source control.
-- **Authentication hardening** — ⚙️ **Backend concern:** Ensures authentication remains secure as the application grows.
-- **API timeouts** — ⚙️ **Backend concern:** Prevents your server from waiting indefinitely for an external service.
-- **Retry strategies** — ⚙️ **Backend concern:** Allows temporary AI/network failures to recover automatically.
-- **Graceful error handling** — 🖥️ **Frontend + backend:** Backend handles failures safely while frontend gives the user a sensible experience.
+- **Security hardening** — Protect APIs with rate limiting, input validation, secure secrets management and robust authentication.
+- **Resilient error handling** — Add timeouts, retry strategies and graceful failure handling across the frontend and backend.
 
-### Observability
+### Monitoring & performance
 
-- **Structured logging** — ⚙️ **Backend concern:** Records useful information about requests, failures and application behaviour.
-- **Error tracking** — ⚙️ **Backend + frontend:** Captures unexpected errors so you can investigate them.
-- **AI generation monitoring** — ⚙️ **Backend concern:** Lets you see how often generation fails or produces invalid questions.
-- **Database/API monitoring** — ⚙️ **Backend/infrastructure concern:** Helps identify slow or failing server operations.
-
-### Performance
-
-- **Database query optimisation** — 🗄️ **Backend/database concern:** Ensures you aren't unnecessarily retrieving huge amounts of data.
-- **Database indexes** — 🗄️ **Database concern:** Speeds up frequently used queries.
-- **Reduce unnecessary API requests** — 🖥️ **Frontend + backend:** Frontend should request only what it needs and backend should provide sensible endpoints.
-- **Question prefetching** — 🖥️ **Frontend + backend:** Backend generates the question while frontend is still displaying the current one.
-- **Frontend performance** — 🖥️ **Frontend concern:** Keeps the interface responsive and avoids unnecessary rendering/work.
-- **Backend performance** — ⚙️ **Backend concern:** Keeps API responses and server-side processing efficient.
+- **Application monitoring** — Add structured logging, error tracking and monitoring for AI generation, APIs and database operations.
+- **Performance optimisation** — Improve database queries and indexes, reduce unnecessary API requests and optimise frontend/backend performance.
+- **Question prefetching** — Generate upcoming questions in advance to reduce waiting.
 
 ### Testing & deployment
 
-- **Unit tests** — 🧪 **Both:** Test individual pieces of logic in isolation.
-- **Integration tests** — 🧪 **Both:** Test several parts working together.
-- **API tests** — 🧪 **Backend concern:** Verify that your endpoints behave correctly.
-- **Playwright E2E tests** — 🧪 **Full-stack concern:** Simulates a real user interacting with the application from browser to backend.
-- **CI/CD** — 🚀 **Infrastructure/engineering concern:** Automatically runs tests/builds and potentially deploys changes.
-- **Production deployment** — 🚀 **Full-stack/infrastructure concern:** Gets the frontend, backend and database into a real environment.
-- **Environment configuration** — 🚀 **Backend/infrastructure concern:** Keeps development/test/production settings separate.
+- **Comprehensive testing** — Expand unit, integration and API tests; add Playwright end-to-end tests.
+- **CI/CD & production deployment** — Automate checks and builds, configure separate environments and deploy the application to production.
 
 ### PWA & product features
 
-- **PWA / Add to Home Screen** — 🖥️ **Frontend concern:** Makes the web app behave more like an installable mobile application.
-- **Offline/cache strategy** — 🖥️ **Frontend concern:** Allows selected parts of the app to continue working without a network connection.
-- **Push notifications** — 🖥️ **Frontend + backend:** Browser handles receiving/displaying notifications while backend triggers them.
-- **Daily streak** — ⚙️ **Backend + database + frontend:** Backend calculates the streak, database stores activity, and frontend displays it.
-- **Daily/weekly goals** — ⚙️ **Backend + frontend:** Backend tracks progress while frontend lets users configure and view goals.
-- **Spaced repetition** — ⚙️ **Backend/domain logic:** The server calculates when previously learned material should appear again.
-- **Grammar-specific practice** — 🖥️ **Frontend + backend:** Frontend lets users choose a grammar area and backend selects/generates appropriate questions.
-- **Story mode** — ⚙️ **Backend + frontend:** Backend generates the story while frontend presents it interactively.
-- **Progress charts** — 🖥️ **Frontend concern:** The backend supplies the historical data and the frontend visualises it.
+- **Progress & motivation** — Add daily streaks, learning goals and progress charts.
+- **Advanced learning** — Introduce spaced repetition, grammar-specific practice and story mode.
+- **PWA capabilities** — Support installation, selected offline functionality and push notifications.
