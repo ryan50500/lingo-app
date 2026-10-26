@@ -1,4 +1,3 @@
-
 /* ========================================
    1. Design tokens
    ======================================== */
@@ -10,7 +9,7 @@
 
   --color-text: #202533;
   --color-text-muted: #687083;
-  --color-background: #f7f8fc;
+  --color-background: yellow;
   --color-surface: #ffffff;
   --color-border: #dfe3eb;
 
