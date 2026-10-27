@@ -8,6 +8,20 @@ adapt to their weaknesses.
 
 **Goal:** Build a complete, playable end-to-end quiz.
 
+### Implementation 🚀
+
+🔑 Set up the API key — ✅ ✅ ✅ Create an OpenAI API key and save it in a .env file in the backend folder as OPENAI_API_KEY=your_key. Never put the key in the frontend.
+
+📦 Install dependencies — Install openai, express and dotenv in the backend project.
+
+🧪 Test the OpenAI connection — In backend/server.ts, create a simple /test endpoint that sends a basic prompt to OpenAI and returns its response. Run the server and visit http://localhost:3001/test to confirm it works.
+
+🧠 Create the quiz generation endpoint — In backend/server.ts, add /api/quiz/generate to accept quiz settings and ask OpenAI to generate questions based on them.
+
+🔗 Connect the frontend to the backend — In src/services/quizApi.ts, create a fetch() function that sends quiz settings to /api/quiz/generate and returns the generated questions.
+
+⚙️ Connect the setup page — In src/setup/SetupPage.tsx, send the user's selected topic, difficulty, question count and question type to the API service.
+
 ### Core application
 
 - **Frontend** — React, TypeScript and Vite; quiz setup, A1–C1 difficulty selection, drag-and-drop answers, feedback, scoring and loading/error states.
