@@ -12,7 +12,7 @@ adapt to their weaknesses.
 
 🔑 Set up the API key — ✅ ✅ ✅ Create an OpenAI API key and save it in a .env file in the backend folder as OPENAI_API_KEY=your_key. Never put the key in the frontend.
 
-📦 Install dependencies — Install openai, express and dotenv in the backend project.
+📦 Install dependencies ✅ ✅ ✅ — Install openai, express and dotenv in the backend project.
 
 🧪 Test the OpenAI connection — In backend/server.ts, create a simple /test endpoint that sends a basic prompt to OpenAI and returns its response. Run the server and visit http://localhost:3001/test to confirm it works.
 
