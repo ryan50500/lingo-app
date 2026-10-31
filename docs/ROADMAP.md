@@ -10,17 +10,15 @@ adapt to their weaknesses.
 
 ### Implementation 🚀
 
-🔑 Set up the API key — ✅ ✅ ✅ Create an OpenAI API key and save it in a .env file in the backend folder as OPENAI_API_KEY=your_key. Never put the key in the frontend.
+#### How the frontend and backend communicate
 
-📦 Install dependencies ✅ ✅ ✅ — Install openai, express and dotenv in the backend project.
-
-🧪 Test the OpenAI connection — In backend/server.ts, create a simple /test endpoint that sends a basic prompt to OpenAI and returns its response. Run the server and visit http://localhost:3001/test to confirm it works.
-
-🧠 Create the quiz generation endpoint — In backend/server.ts, add /api/quiz/generate to accept quiz settings and ask OpenAI to generate questions based on them.
-
-🔗 Connect the frontend to the backend — In src/services/quizApi.ts, create a fetch() function that sends quiz settings to /api/quiz/generate and returns the generated questions.
-
-⚙️ Connect the setup page — In src/setup/SetupPage.tsx, send the user's selected topic, difficulty, question count and question type to the API service.
+1. SetupPage.tsx (Frontend) - The user chooses their topic, difficulty, question count. These settings are stored using useState()
+2. SetupPage.tsx (Frontend) - User clicks Generate Quiz and settings are passed to generateQuiz(settings) in quizApi.ts inside services folder.
+3. quizApi.ts (Frontend) - Send settings to server.js in the backend.
+4. server.js (Backend) - The backend accesses the incoming quiz settings through req.body
+5. server.js (Backend) - Sends the user's quiz settings to OpenAI using the OpenAI API. OpenAI generates questions based on the requested settings.
+6. server.js (Backend) - Sends the generated questions back to the frontend as a JSON response using res.json(). The response is received by the generateQuiz() function in quizApi.
+7. quizApi.ts (Frontend) - Uses response.json() to parse the backend's response into JavaScript data and returns it to SetupPage.tsx.
 
 ### Core application
 
