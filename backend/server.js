@@ -16,14 +16,20 @@ app.post("/api/quiz/generate", async (req, res) => {
 
     // 2. Check that the required settings have been provided.
     if (!topic || !difficulty || !questionCount) {
+      // If any required setting is missing, send a 400 error response
+      // and immediately exit this route function.
       return res.status(400).json({
         error: "Please provide a topic, difficulty and question count.",
       });
     }
 
+    // Convert questionCount into a number.
     const count = Number(questionCount);
 
+    // Check that the question count is a whole number between 1 and 20.
     if (!Number.isInteger(count) || count < 1 || count > 20) {
+      // If the question count is invalid, send a 400 error response
+      // and immediately exit this route function.
       return res.status(400).json({
         error: "Question count must be a whole number between 1 and 20.",
       });
@@ -57,7 +63,9 @@ app.post("/api/quiz/generate", async (req, res) => {
     // 4. Convert OpenAI's JSON text into a JavaScript object.
     const quiz = JSON.parse(response.output_text);
 
-    // 5. Send the generated questions back to the frontend.
+    // 5. Take the generated quiz.
+    // Convert it into JSON.
+    // Send it back as the HTTP response to the frontend.
     res.json(quiz);
   } catch (error) {
     console.error("Quiz generation error:", error);
