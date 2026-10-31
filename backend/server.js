@@ -14,8 +14,12 @@ app.get("/test", async (_req, res) => {
 
     res.json({ message: response.output_text });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "OpenAI request failed" });
+    console.error("OpenAI error:", error);
+
+    res.status(500).json({
+      error: "OpenAI request failed",
+      details: error.message,
+    });
   }
 });
 
