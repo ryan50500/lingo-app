@@ -19,7 +19,13 @@ export function SetupPage() {
       // We'll use these questions in the quiz flow next.
       console.log("here are the questions:", questions);
     } catch (error) {
-      console.error("Could not generate quiz:", error);
+      if (error instanceof Error) {
+        console.log("ohhhh");
+
+        console.error("Could not generate quiz:", error.message);
+      } else {
+        console.error("Could not generate quiz:", error);
+      }
     }
   };
 

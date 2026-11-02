@@ -19,7 +19,7 @@ export async function generateQuiz(settings: QuizSettings) {
 
   if (!response.ok) {
     console.log("response not ok");
-    throw new Error("Failed to generate quiz");
+    throw new Error("big boo boo error");
   }
   console.log("response IS ok :)");
 

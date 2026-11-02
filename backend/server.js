@@ -15,7 +15,7 @@ app.post("/api/quiz/generate", async (req, res) => {
   console.log("what about this or?");
   try {
     // 1. Get the quiz settings sent from SetupPage.tsx.
-    const { topic, difficulty, questionCount, questionType } = req.body;
+    const { topic, difficulty, questionCount } = req.body;
 
     // 2. Check that the required settings have been provided.
     if (!topic || !difficulty || !questionCount) {
@@ -42,7 +42,7 @@ app.post("/api/quiz/generate", async (req, res) => {
     const response = await client.responses.create({
       model: "gpt-6-luna",
       input: `
-        Generate ${count} ${questionType || "multiple choice"} quiz questions.
+        Generate ${count}  quiz questions.
 
         Topic: ${topic}
         Difficulty: ${difficulty}
