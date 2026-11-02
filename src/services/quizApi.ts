@@ -18,8 +18,10 @@ export async function generateQuiz(settings: QuizSettings) {
   });
 
   if (!response.ok) {
+    console.log("response not ok");
     throw new Error("Failed to generate quiz");
   }
+  console.log("response IS ok :)");
 
   // Parses the JSON response from the backend and returns it to the frontend.
   return response.json();

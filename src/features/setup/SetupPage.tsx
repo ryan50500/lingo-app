@@ -8,7 +8,6 @@ export function SetupPage() {
     topic: "everyday conversation",
     difficulty: "intermediate",
     questionCount: 10,
-    questionType: "multiple choice",
   });
 
   // Runs when the user clicks the Generate Quiz button.
@@ -18,7 +17,7 @@ export function SetupPage() {
       const questions = await generateQuiz(settings);
 
       // We'll use these questions in the quiz flow next.
-      console.log(questions);
+      console.log("here are the questions:", questions);
     } catch (error) {
       console.error("Could not generate quiz:", error);
     }

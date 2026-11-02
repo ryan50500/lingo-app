@@ -1,15 +1,18 @@
 import "dotenv/config";
 import express from "express";
 import OpenAI from "openai";
+import cors from "cors";
 
 const app = express();
 const client = new OpenAI();
 
+app.use(cors({ origin: "http://localhost:5173" }));
 // Allows Express to read JSON sent from the frontend.
 app.use(express.json());
 
 // Receives quiz settings and generates quiz questions using OpenAI.
 app.post("/api/quiz/generate", async (req, res) => {
+  console.log("what about this or?");
   try {
     // 1. Get the quiz settings sent from SetupPage.tsx.
     const { topic, difficulty, questionCount, questionType } = req.body;
@@ -44,7 +47,7 @@ app.post("/api/quiz/generate", async (req, res) => {
         Topic: ${topic}
         Difficulty: ${difficulty}
 
-        Return the result as a JSON object with a "questions" property.
+        Return the result as a JSON object with a "boo-boo" property.
         The "questions" property should contain an array of questions.
 
         Each question should have:
